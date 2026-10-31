@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advent Calendar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=DM+Serif+Display&family=Karla:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app" class="hidden">
+        <div class="panel" id="panel">
+            <canvas class="snow" id="snow" aria-hidden="true"></canvas>
+
+            <header class="header">
+                <div class="brand">
+                    <p class="eyebrow" id="server-name">Last Chance Roleplay</p>
+                    <h1>Advent <span>Calendar</span></h1>
+                </div>
+
+                <div class="countdown">
+                    <div class="countdown-main" id="countdown-main"></div>
+                    <p class="countdown-sub" id="countdown-sub"></p>
+                </div>
+
+                <div class="cheer">
+                    <div class="cheer-top"><span>Cheer level</span><b id="cheer-label">Frosty</b></div>
+                    <div class="cheer-bar"><div class="cheer-fill" id="cheer-fill"></div></div>
+                </div>
+
+                <button class="close" id="close" title="Close (Esc)">✕</button>
+            </header>
+
+            <nav class="tabs">
+                <button class="tab active" data-tab="advent">Advent doors <i class="badge hidden" id="badge-advent"></i></button>
+                <button class="tab" data-tab="presents">Presents <i class="badge hidden" id="badge-presents"></i></button>
+            </nav>
+
+            <section class="view" id="view-advent">
+                <div class="calendar">
+                    <div class="board" id="board"></div>
+                    <div class="legend">
+                        <span><i class="dot available"></i>Ready to open</span>
+                        <span><i class="dot claimed"></i>Opened</span>
+                        <span><i class="dot locked"></i>Locked</span>
+                        <span><i class="dot missed"></i>Expired</span>
+                    </div>
+                </div>
+
+                <aside class="spin-panel">
+                    <div class="spin-head">
+                        <p class="detail-eyebrow" id="detail-eyebrow"></p>
+                        <h2 id="detail-title"></h2>
+                    </div>
+                    <div class="wheel-wrap">
+                        <svg class="pointer" id="pointer" viewBox="0 0 34 42"><path d="M17 41 3 12a14 14 0 1 1 28 0Z" fill="#e9b955" stroke="#5a3b0a" stroke-width="2"/><circle cx="17" cy="13" r="5" fill="#c8303f"/></svg>
+                        <canvas id="wheel" width="600" height="600"></canvas>
+                        <div class="hub" id="hub"></div>
+                    </div>
+                    <button class="btn" id="spin">Spin</button>
+                    <p class="detail-note" id="detail-note"></p>
+                </aside>
+            </section>
+
+            <section class="view hidden" id="view-presents">
+                <div class="col">
+                    <div class="block">
+                        <div class="block-head"><h2>Under your tree</h2><span id="opened-count"></span></div>
+                        <div class="presents" id="presents"></div>
+                        <p class="hint">Presents also open straight from your inventory. Find them behind advent doors or inside other presents.</p>
+                    </div>
+                    <div class="block hidden" id="pending-block">
+                        <div class="block-head"><h2>Unclaimed gifts</h2><span>Make room, then collect</span></div>
+                        <div class="pending" id="pending"></div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="block">
+                        <div class="block-head"><h2>Ornament collection</h2><span id="collection-count"></span></div>
+                        <div class="collection" id="collection"></div>
+                    </div>
+                    <div class="block" id="feed-block">
+                        <div class="block-head"><h2>Recent unwraps</h2><span>Rare finds across the city</span></div>
+                        <ul class="feed" id="feed"></ul>
+                    </div>
+                    <div class="block hidden" id="board-block">
+                        <div class="block-head"><h2>Most presents unwrapped</h2><span>This season</span></div>
+                        <ol class="leaders" id="leaders"></ol>
+                    </div>
+                </div>
+            </section>
+
+            <div class="result hidden" id="result">
+                <div class="result-card" id="result-card">
+                    <p class="result-eyebrow" id="result-eyebrow"></p>
+                    <div class="result-icon" id="result-icon"></div>
+                    <h3 id="result-title"></h3>
+                    <p class="result-tier" id="result-tier"></p>
+                    <p class="result-note" id="result-note"></p>
+                    <button class="btn" id="result-ok">Merry Christmas!</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="unwrap hidden" id="unwrap">
+            <div class="stage" id="stage">
+                <div class="rays"></div>
+                <button class="gift" id="gift" aria-label="Tap the present"></button>
+                <div class="prize" id="prize"></div>
+                <p class="rar" id="u-rarity"></p>
+                <h3 id="u-title">Tap to unwrap</h3>
+                <p class="u-text" id="u-text">Give it three good shakes.</p>
+                <div class="taps" id="taps"><span></span><span></span><span></span></div>
+                <div class="u-actions" id="u-actions"></div>
+            </div>
+        </div>
+
+        <canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
+        <div class="toast hidden" id="toast"></div>
+    </div>
+
+    <script src="art.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
