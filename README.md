@@ -39,15 +39,18 @@ Christmas advent calendar, daily spin wheel and unwrappable presents for FiveM (
   - The **Ornament collection** tracks which ornaments each character has unwrapped this season.
   - **Recent unwraps** shows rare and better finds from across the server.
   - **Most presents unwrapped** is a leaderboard for the season.
-- A chat announcement to everyone when someone unwraps a Legendary (`Config.Announce`).
-- Chat message when a character loads, and a server-wide reminder every hour.
+- **Christmas Collector.** An NPC in Legion Square buys ornaments for cash: Rare $750, Epic $2,500, Legendary $10,000. Players use ox_target on him to sell one type or everything at once. The server checks they're standing next to him before taking the ornaments and paying.
+- **Chat reminders that send people to `/christmas`:**
+  - Every 30 minutes, alternating between the advent calendar and presents/the Collector. They start Nov 1 and stop after Christmas Day.
+  - When a character loads: doors waiting, presents to unwrap, and unclaimed gifts.
+  - A chat announcement to everyone when someone unwraps a Legendary (`Config.Announce`).
 
 ## Install
 
 1. Drop `bdev-christmas` into your resources folder.
 2. **Add the items to ox_inventory.** Copy the entries from `install/items.lua` into `ox_inventory/data/items.lua`.
 3. **Add the item images.** Copy everything in `install/images/` into `ox_inventory/web/images/`.
-4. Add `ensure bdev-christmas` to `server.cfg` **after** `ox_lib`, `oxmysql`, `qbx_core` and `ox_inventory`.
+4. Add `ensure bdev-christmas` to `server.cfg` **after** `ox_lib`, `oxmysql`, `qbx_core`, `ox_inventory` and `ox_target`.
 5. Restart. The `bdev_christmas_claims` and `bdev_christmas_unwraps` tables are created automatically (`sql/christmas.sql` is there if you'd rather run it by hand).
 
 On start, the server prints a warning for any reward or present item that ox_inventory doesn't recognize. That usually means step 2 was skipped.
@@ -65,6 +68,9 @@ Everything lives in `config.lua`:
 | `GraceDays` | `1` | Extra days a door stays open after its own day (`0` = same day only) |
 | `TrackBy` | `citizenid` | `citizenid` = one calendar per character, `license` = one per player |
 | `DebugDay` | `nil` | Set to 1–25 to test a specific day. **Leave nil on live.** |
+| `JoinMessage` | `true` | Chat message when a character loads |
+| `Broadcast` | every 30 min, from 30 days before | Server-wide chat reminder. Stops after Christmas Day |
+| `Collector` | Legion Square | The ornament buyer: position, ped model, blip, prices, `cash`/`bank`, and optional months he's open |
 | `Items` | 15 items | Rarity of each custom item, and which ones count as collectible ornaments |
 | `Presents` | 4 presents | Loot table for each present: `{ item, min, max, weight }` or `{ money = { min, max }, weight, rarity }` |
 | `Feed` | `rare`, 8 rows | Lowest rarity shown in Recent unwraps, and how many rows |

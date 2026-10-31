@@ -561,6 +561,10 @@ function renderPresents() {
             <span class="rar">${RARITY_LABEL[c.rarity]}</span>
         </div>`).join('');
 
+    const hint = el('collector-hint');
+    hint.classList.toggle('hidden', !state.collector);
+    if (state.collector) hint.textContent = `Got spares? The ${state.collector.label} in ${state.collector.location} buys ornaments for cash.`;
+
     const feed = state.feed || [];
     el('feed').innerHTML = feed.length
         ? feed.map((f) => `<li class="row" style="--rc:${rc(f.reward.rarity)}">${iconHtml(f.reward.name)}

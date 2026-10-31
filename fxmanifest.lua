@@ -14,10 +14,12 @@ shared_scripts {
 server_scripts {
     '@oxmysql/lib/MySQL.lua',
     'server/main.lua',
+    'server/collector.lua',
 }
 
 client_scripts {
     'client/main.lua',
+    'client/collector.lua',
 }
 
 ui_page 'html/index.html'
@@ -33,5 +35,6 @@ dependencies {
     'ox_lib',
     'oxmysql',
     'ox_inventory',
+    'ox_target',
     'qbx_core',
 }

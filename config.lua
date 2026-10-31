@@ -29,13 +29,17 @@ Config.TrackBy = 'citizenid'
 -- Leave nil on the live server.
 Config.DebugDay = nil
 
--- Chat message shown to a player when their character loads.
+-- Chat message shown to a player when their character loads, telling them
+-- what is waiting for them (doors to open, presents to unwrap, gifts to collect).
 Config.JoinMessage = true
 
--- Chat message broadcast to everyone on an interval.
+-- Chat reminder broadcast to everyone, pointing them to /christmas.
+-- Messages rotate between the advent calendar, presents and the Collector.
+-- Reminders (and join messages) stop after Christmas Day.
 Config.Broadcast = {
     enabled = true,
-    intervalMinutes = 60,
+    intervalMinutes = 30,
+    startDaysBefore = 30, -- start reminding this many days before Dec 1 (30 = Nov 1)
 }
 
 Config.ChatPrefix = 'Christmas'
@@ -76,6 +80,52 @@ Config.Announce = 'legendary'
 
 -- How many players to show on the "Most presents unwrapped" board. 0 = hide.
 Config.Leaderboard = 5
+
+---------------------------------------------------------------------------
+-- Christmas Collector
+--
+-- An NPC in Legion Square who buys ornaments. Players target him with
+-- ox_target and pick what to sell. The server checks the player is standing
+-- next to him, removes the ornaments, then pays.
+---------------------------------------------------------------------------
+
+Config.Collector = {
+    enabled = true,
+
+    label = 'Christmas Collector',
+    locationLabel = 'Legion Square', -- shown in the menu's ornament collection
+
+    model = `a_m_o_genstreet_01`,
+    coords = vec4(195.27, -934.05, 30.69, 145.0), -- x, y, z, heading
+    scenario = 'WORLD_HUMAN_CLIPBOARD',          -- nil = just stand there
+
+    blip = {
+        enabled = true,
+        sprite = 108,
+        color = 1,
+        scale = 0.8,
+    },
+
+    -- How far from the NPC a sale is accepted (server side).
+    maxDistance = 6.0,
+
+    -- 'cash' or 'bank'
+    account = 'cash',
+
+    -- Months the Collector is buying. nil = all year.
+    -- Example: { 12, 1 } = December and January only.
+    openMonths = nil,
+
+    -- Price paid per ornament.
+    prices = {
+        ornament_robin      = 750,
+        ornament_pinecone   = 750,
+        ornament_nutcracker = 2500,
+        ornament_snowglobe  = 2500,
+        ornament_sleighbell = 10000,
+        ornament_star       = 10000,
+    },
+}
 
 ---------------------------------------------------------------------------
 -- Presents (loot boxes)

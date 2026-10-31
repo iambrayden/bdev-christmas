@@ -89,10 +89,6 @@ local function inWindow(day, index)
     return day <= index and index - day <= graceDays()
 end
 
-local function isRunning(index)
-    return index >= 1 and index <= TOTAL_DAYS + graceDays()
-end
-
 ---------------------------------------------------------------------------
 -- Cheer: everything ramps from Dec 1 to Christmas Eve
 ---------------------------------------------------------------------------
@@ -414,6 +410,8 @@ local function buildState(src)
         collection = collectionFor(found),
         feed = getFeed(year),
         leaderboard = getLeaderboard(year),
+        collector = Config.Collector and Config.Collector.enabled
+            and { label = Config.Collector.label, location = Config.Collector.locationLabel } or nil,
     }
 end
 
@@ -677,29 +675,62 @@ end)
 -- Chat messages
 ---------------------------------------------------------------------------
 
+--- True while chat reminders should run: from Broadcast.startDaysBefore days
+--- before Dec 1 up to and including Christmas Day.
+local function inAnnounceWindow(index)
+    return index > -(Config.Broadcast.startDaysBefore or 0) and index <= TOTAL_DAYS
+end
+
+local function plural(n, word)
+    return ('%d %s%s'):format(n, word, n == 1 and '' or 's')
+end
+
+local function presentTotal(state)
+    local total = 0
+    for _, p in ipairs(state.presents) do total += p.count end
+    return total
+end
+
+local function collectorHint()
+    local c = Config.Collector
+    if not c or not c.enabled then return '' end
+    return (' Sell spare ornaments to the %s in %s.'):format(c.label, c.locationLabel or 'town')
+end
+
 RegisterNetEvent('bdev_christmas:server:loaded', function()
     local src = source
     if not Config.JoinMessage or welcomed[src] then return end
     welcomed[src] = true
+
+    local _, index = calendarNow()
+    if not inAnnounceWindow(index) then return end
 
     local state = buildState(src)
     if not state then return end
     local cmd = '/' .. Config.Command
 
     if #state.pending > 0 then
-        chat(src, ('You have %d unclaimed gift%s waiting. Type %s to collect.'):format(
-            #state.pending, #state.pending == 1 and '' or 's', cmd))
+        chat(src, ('You have %s waiting. Type %s to collect.'):format(plural(#state.pending, 'unclaimed gift'), cmd))
     end
 
-    local _, index = calendarNow()
-    if not isRunning(index) then return end
+    local presents = presentTotal(state)
+    if presents > 0 then
+        chat(src, ('You have %s under your tree. Type %s or use them from your inventory to unwrap them!')
+            :format(plural(presents, 'present'), cmd))
+    end
+
+    if index < 1 then
+        chat(src, ('The Christmas advent calendar opens December 1st, in %s. Type %s to see the countdown!')
+            :format(plural(1 - index, 'day'), cmd))
+        return
+    end
 
     local open = countOpen(state)
     if open > 0 then
         local yesterday = index > 1 and state.days[index - 1]
         local expiring = yesterday and (yesterday.status == 'available' or yesterday.status == 'pending')
-        chat(src, ('Cheer level: %s. You have %d advent door%s to open%s. Type %s!'):format(
-            cheerLevel(math.min(index, TOTAL_DAYS)), open, open == 1 and '' or 's',
+        chat(src, ('Cheer level: %s. You have %s to open%s. Type %s!'):format(
+            cheerLevel(math.min(index, TOTAL_DAYS)), plural(open, 'advent door'),
             expiring and ' (yesterday\'s expires at midnight)' or '', cmd))
     elseif index < TOTAL_DAYS then
         chat(src, ('You opened every door so far. A new one unlocks at midnight. Type %s to see the countdown.'):format(cmd))
@@ -712,21 +743,37 @@ AddEventHandler('playerDropped', function()
     busy[src] = nil
 end)
 
+--- The calendar reminder for today, or nil when there is nothing to say.
+local function calendarReminder(index, cmd)
+    if index < 1 then
+        return ('The Christmas advent calendar opens in %s: a new door and a prize wheel every day until Christmas. Type %s to see the countdown!')
+            :format(plural(1 - index, 'day'), cmd)
+    elseif index < TOTAL_DAYS then
+        return ('%s until Christmas. Cheer level: %s. Today\'s advent door is open, type %s to spin the wheel!')
+            :format(plural(TOTAL_DAYS - index, 'day'), cheerLevel(index), cmd)
+    elseif index == TOTAL_DAYS then
+        return ('Merry Christmas! Door 25 has the best wheel of the season. Type %s to open it.'):format(cmd)
+    end
+end
+
+local function presentReminder(cmd)
+    return ('Got a Christmas present? Use it from your inventory or type %s to unwrap it. Rare ornaments are hiding inside!%s')
+        :format(cmd, collectorHint())
+end
+
 if Config.Broadcast.enabled then
     CreateThread(function()
         local interval = math.max(1, Config.Broadcast.intervalMinutes) * 60000
+        local turn = 0
         while true do
             Wait(interval)
             local _, index = calendarNow()
-            local cmd = '/' .. Config.Command
-            if index >= 1 and index < TOTAL_DAYS then
-                local left = TOTAL_DAYS - index
-                chat(-1, ('%d day%s until Christmas. Cheer level: %s. Today\'s advent door is open, type %s!')
-                    :format(left, left == 1 and '' or 's', cheerLevel(index), cmd))
-            elseif index == TOTAL_DAYS then
-                chat(-1, ('Merry Christmas! Door 25 has the best wheel of the season. Type %s to open it.'):format(cmd))
-            elseif isRunning(index) then
-                chat(-1, ('Last chance! The Christmas door can still be opened with %s.'):format(cmd))
+            if inAnnounceWindow(index) then
+                local cmd = '/' .. Config.Command
+                turn += 1
+                -- Alternate between the calendar and presents, so both get seen.
+                local message = (turn % 2 == 1 and calendarReminder(index, cmd)) or presentReminder(cmd)
+                chat(-1, message)
             end
         end
     end)
