@@ -257,7 +257,7 @@ async function refresh() {
     refreshing = true;
     const fresh = await post('refresh');
     refreshing = false;
-    if (fresh) setState(fresh);
+    if (fresh && fresh.days) setState(fresh);
 }
 
 /* ---------- Wheel ---------- */
@@ -320,7 +320,9 @@ function drawWheel(winner) {
         if (img.complete && img.naturalWidth) wctx.drawImage(img, -size / 2, -R * 0.9, size, size);
         if (span > 0.35) {
             wctx.translate(0, -R * 0.9 + size + 26);
-            wctx.rotate(Math.PI / 2 * (mid > Math.PI ? 1 : -1));
+            // Flip based on where the slice is on screen, so labels never read upside down.
+            const onScreen = ((mid + rotation) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+            wctx.rotate(Math.PI / 2 * (onScreen > Math.PI ? 1 : -1));
             wctx.font = '800 22px Karla, sans-serif';
             wctx.textAlign = 'center';
             wctx.textBaseline = 'middle';

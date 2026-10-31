@@ -26,6 +26,8 @@ Christmas advent calendar, daily spin wheel and unwrappable presents for FiveM (
 
 <sub>The screenshots use sample data.</sub>
 
+More: **[the full feature tour](docs/TOUR.md)** covers every door state, every unwrap result, the Collector's menu, and the chat messages.
+
 ## Features
 
 - **Advent calendar.** `/christmas` opens a NUI advent board with 25 doors, a live countdown to Christmas morning and a timer for the next door.
@@ -41,7 +43,7 @@ Christmas advent calendar, daily spin wheel and unwrappable presents for FiveM (
   - **Most presents unwrapped** is a leaderboard for the season.
 - **Christmas Collector.** An NPC in Legion Square buys ornaments for cash: Rare $750, Epic $2,500, Legendary $10,000. Players use ox_target on him to sell one type or everything at once. The server checks they're standing next to him before taking the ornaments and paying.
 - **Chat reminders that send people to `/christmas`:**
-  - Every 30 minutes, alternating between the advent calendar and presents/the Collector. They start Nov 1 and stop after Christmas Day.
+  - Every 2 hours from Nov 1 and every hour in December, alternating between the advent calendar and presents/the Collector. They stop after Christmas Day.
   - When a character loads: doors waiting, presents to unwrap, and unclaimed gifts.
   - A chat announcement to everyone when someone unwraps a Legendary (`Config.Announce`).
 
@@ -69,7 +71,7 @@ Everything lives in `config.lua`:
 | `TrackBy` | `citizenid` | `citizenid` = one calendar per character, `license` = one per player |
 | `DebugDay` | `nil` | Set to 1–25 to test a specific day. **Leave nil on live.** |
 | `JoinMessage` | `true` | Chat message when a character loads |
-| `Broadcast` | every 30 min, from 30 days before | Server-wide chat reminder. Stops after Christmas Day |
+| `Broadcast` | every 2 h from Nov 1, every 1 h in December | Server-wide chat reminder. Stops after Christmas Day |
 | `Collector` | Legion Square | The ornament buyer: position, ped model, blip, prices, `cash`/`bank`, and optional months he's open |
 | `Items` | 15 items | Rarity of each custom item, and which ones count as collectible ornaments |
 | `Presents` | 4 presents | Loot table for each present: `{ item, min, max, weight }` or `{ money = { min, max }, weight, rarity }` |

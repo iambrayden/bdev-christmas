@@ -38,8 +38,9 @@ Config.JoinMessage = true
 -- Reminders (and join messages) stop after Christmas Day.
 Config.Broadcast = {
     enabled = true,
-    intervalMinutes = 30,
-    startDaysBefore = 30, -- start reminding this many days before Dec 1 (30 = Nov 1)
+    startDaysBefore = 30,        -- start reminding this many days before Dec 1 (30 = Nov 1)
+    beforeIntervalMinutes = 120, -- how often before Dec 1
+    decemberIntervalMinutes = 60, -- how often from Dec 1 to Christmas Day
 }
 
 Config.ChatPrefix = 'Christmas'

@@ -763,17 +763,21 @@ end
 
 if Config.Broadcast.enabled then
     CreateThread(function()
-        local interval = math.max(1, Config.Broadcast.intervalMinutes) * 60000
+        local b = Config.Broadcast
+        local lastSent = os.time()
         local turn = 0
         while true do
-            Wait(interval)
+            Wait(60000)
             local _, index = calendarNow()
             if inAnnounceWindow(index) then
-                local cmd = '/' .. Config.Command
-                turn += 1
-                -- Alternate between the calendar and presents, so both get seen.
-                local message = (turn % 2 == 1 and calendarReminder(index, cmd)) or presentReminder(cmd)
-                chat(-1, message)
+                local minutes = index < 1 and (b.beforeIntervalMinutes or 120) or (b.decemberIntervalMinutes or 60)
+                if os.time() - lastSent >= math.max(1, minutes) * 60 then
+                    lastSent = os.time()
+                    local cmd = '/' .. Config.Command
+                    turn += 1
+                    -- Alternate between the calendar and presents, so both get seen.
+                    chat(-1, (turn % 2 == 1 and calendarReminder(index, cmd)) or presentReminder(cmd))
+                end
             end
         end
     end)
