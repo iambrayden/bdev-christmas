@@ -2,6 +2,30 @@
 
 Christmas advent calendar, daily spin wheel and unwrappable presents for FiveM (Qbox + ox_inventory). It works like `bdev-halloween`, plus custom Christmas items.
 
+## Screenshots
+
+**Advent calendar.** 25 doors with a live countdown and the selected door's wheel. Opened doors show what you won.
+
+![Advent calendar](docs/advent.png)
+
+**Door prize.** Shown after the wheel stops, coloured by rarity.
+
+![Door prize](docs/door-result.png)
+
+**Presents tab.** Presents you own, unclaimed gifts, your ornament collection, rare finds across the server, and the leaderboard.
+
+![Presents tab](docs/presents.png)
+
+**Unwrapping a present.** Shake it three times and it bursts open.
+
+![Unwrapping a present](docs/unwrap.png)
+
+**Items.** These are the images that go into ox_inventory.
+
+![Items](docs/items.png)
+
+<sub>The screenshots use sample data.</sub>
+
 ## Features
 
 - **Advent calendar.** `/christmas` opens a NUI advent board with 25 doors, a live countdown to Christmas morning and a timer for the next door.
