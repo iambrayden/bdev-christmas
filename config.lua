@@ -97,7 +97,7 @@ Config.Collector = {
     locationLabel = 'Legion Square', -- shown in the menu's ornament collection
 
     model = `a_m_o_genstreet_01`,
-    coords = vec4(195.27, -934.05, 30.69, 145.0), -- x, y, z, heading
+    coords = vec4(208.91, -934.33, 29.69, 93.38), -- x, y, z, heading
     scenario = 'WORLD_HUMAN_CLIPBOARD',          -- nil = just stand there
 
     blip = {
